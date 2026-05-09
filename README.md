@@ -1,6 +1,24 @@
 # PacManWakawakaDAA
 wakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawaka
 
+
+
+pacman_ai/
+├── main.py             ← game loop & entry point
+├── config.py           ← all constants (TILE_SIZE, colors, RAW_MAP, etc.)
+├── map_utils.py        ← parse_map, is_walkable, get_neighbors, distances
+├── renderer.py         ← draw_map, draw_ui (pure drawing, no game logic)
+├── algorithms/
+│   ├── __init__.py     ← re-exports all three so imports stay clean
+│   ├── astar.py        ← A* only
+│   ├── bfs.py          ← BFS only
+│   └── dijkstra.py     ← Dijkstra only
+└── entities/
+    ├── __init__.py
+    ├── pacman.py       ← Pacman class
+    └── ghost.py        ← Ghost class
+
+    
 Untuk project:
 
 🎮 Pacman + AI Ghost (BFS/A*)
