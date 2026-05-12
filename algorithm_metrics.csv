@@ -1,1 +1,6 @@
-Algorithm,Calls,Successful_Searches,Failed_Searches,Avg_Time_ms,Avg_Path_Length,Total_Time_ms
+Algorithm,Calls,Successful_Searches,Failed_Searches,Avg_Time_ms,Avg_Path_Length,Total_Time_ms,Avg_Nodes_Explored
+astar,56,56,0,0.107,10.4,6.013,13.3
+bfs,50,50,0,0.300,10.0,15.007,63.4
+dijkstra,56,56,0,0.333,10.4,18.641,63.6
+dfs,53,53,0,0.392,48.7,20.774,83.8
+

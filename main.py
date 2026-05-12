@@ -185,6 +185,25 @@ def main():
 
         pygame.display.flip()
 
+    from report_generator import AlgorithmReport
+
+    AlgorithmReport.save_report("algorithm_report.txt")
+
+    import os
+
+    file_exists = os.path.exists("algorithm_metrics.csv")
+    with open("algorithm_metrics.csv", "a") as f:
+        if not file_exists:
+            f.write(
+                "Algorithm,Calls,Successful_Searches,Failed_Searches,Avg_Time_ms,Avg_Path_Length,Total_Time_ms,Avg_Nodes_Explored\n"
+            )
+        # write only the data rows, skip the header
+        csv_content = AlgorithmReport.generate_csv_report()
+        rows = csv_content.split("\n")[1:]  # skip header line
+        f.write("\n".join(rows) + "\n\n")
+
+    print("Reports saved.")
+
     pygame.quit()
     sys.exit()
 

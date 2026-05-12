@@ -1,7 +1,7 @@
 ================================================================================
 PAC-MAN GAME - ALGORITHM ANALYSIS REPORT
 ================================================================================
-Generated: 2026-05-13 01:10:59
+Generated: 2026-05-13 02:02:48
 
 PROJECT OVERVIEW
 --------------------------------------------------------------------------------
@@ -98,7 +98,41 @@ Note: DFS can be used by adding to GHOSTS_CONFIG with "algorithm": "dfs"
 
 PERFORMANCE METRICS
 --------------------------------------------------------------------------------
-No performance data collected yet. Run the game to generate metrics.
+
+Algorithm Performance Statistics:
+
+ASTAR
+  Calls:                 56
+  Successful Searches:   56
+  Failed Searches:       0
+  Avg Execution Time:    0.107 ms
+  Avg Path Length:       10.4 tiles
+  Total Time:            6.013 ms
+
+BFS
+  Calls:                 50
+  Successful Searches:   50
+  Failed Searches:       0
+  Avg Execution Time:    0.300 ms
+  Avg Path Length:       10.0 tiles
+  Total Time:            15.007 ms
+
+DIJKSTRA
+  Calls:                 56
+  Successful Searches:   56
+  Failed Searches:       0
+  Avg Execution Time:    0.333 ms
+  Avg Path Length:       10.4 tiles
+  Total Time:            18.641 ms
+
+DFS
+  Calls:                 53
+  Successful Searches:   53
+  Failed Searches:       0
+  Avg Execution Time:    0.392 ms
+  Avg Path Length:       48.7 tiles
+  Total Time:            20.774 ms
+
 
 WHY THESE ALGORITHMS
 --------------------------------------------------------------------------------

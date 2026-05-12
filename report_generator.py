@@ -221,7 +221,7 @@ The game shows how algorithm choice affects AI behavior and game difficulty.
         """Generate a CSV report of metrics"""
         report = []
         report.append(
-            "Algorithm,Calls,Successful_Searches,Failed_Searches,Avg_Time_ms,Avg_Path_Length,Total_Time_ms"
+            "Algorithm,Calls,Successful_Searches,Failed_Searches,Avg_Time_ms,Avg_Path_Length,Total_Time_ms,Avg_Nodes_Explored"
         )
 
         metrics_data = global_metrics.get_all_summaries()
@@ -233,7 +233,8 @@ The game shows how algorithm choice affects AI behavior and game difficulty.
                 f"{metrics['failed_searches']},"
                 f"{metrics['avg_time']:.3f},"
                 f"{metrics['avg_path_length']:.1f},"
-                f"{metrics['total_time']:.3f}"
+                f"{metrics['total_time']:.3f},"
+                f"{metrics.get('avg_nodes_explored', 0):.1f}"
             )
             report.append(line)
 

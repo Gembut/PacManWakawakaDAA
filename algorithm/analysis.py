@@ -19,6 +19,7 @@ class AlgorithmMetrics:
                 "total_path_length": 0,
                 "avg_path_length": 0.0,
                 "nodes_explored": 0,
+                "avg_nodes_explored": 0.0,
                 "successful_paths": 0,
                 "failed_searches": 0,
             }
@@ -42,7 +43,8 @@ class AlgorithmMetrics:
         else:
             metrics["failed_searches"] += 1
 
-        metrics["nodes_explored"] = nodes_explored
+        metrics["nodes_explored"] += nodes_explored
+        metrics["avg_nodes_explored"] = metrics["nodes_explored"] / metrics["calls"]
 
     def get_algorithm_names(self):
         """Get list of algorithms with recorded metrics"""

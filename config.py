@@ -79,7 +79,7 @@ GHOSTS_CONFIG = [
         "color": GHOST_BLUE,
         "initial_tile": (10, 9),
         "speed": 0.055,
-        "release_at": 20,
+        "release_at": 0,
     },
     {
         "name": "DIJK",
@@ -87,7 +87,15 @@ GHOSTS_CONFIG = [
         "color": GHOST_ORANGE,
         "initial_tile": (11, 9),
         "speed": 0.06,
-        "release_at": 45,
+        "release_at": 0,
+    },
+    {
+        "name": "DFS",
+        "algorithm": "dfs",
+        "color": YELLOW,
+        "initial_tile": (12, 9),
+        "speed": 0.058,
+        "release_at": 0,
     },
 ]
 
