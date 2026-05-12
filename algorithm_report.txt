@@ -1,0 +1,144 @@
+================================================================================
+PAC-MAN GAME - ALGORITHM ANALYSIS REPORT
+================================================================================
+Generated: 2026-05-13 01:10:59
+
+PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+This Pac-Man game implements multiple pathfinding algorithms for ghost AI
+Each ghost uses a different algorithm to chase the player:
+
+ALGORITHMS IMPLEMENTED
+--------------------------------------------------------------------------------
+
+A* (A-STAR)
+Description: Informed search algorithm using heuristic (grid distance) to guide pathfinding
+Time Complexity: O((V + E) log V)
+Space Complexity: O(V)
+Optimal: Yes
+Uses Heuristic: Yes
+Characteristics:
+  • Uses heuristic (grid distance) to estimate distance to goal
+  • More efficient than Dijkstra for pathfinding
+  • Guaranteed to find shortest path if heuristic is admissible
+  • Perfect for single target pathfinding (player location)
+
+DIJKSTRA'S ALGORITHM
+Description: Uniform cost search that finds shortest path from start to all reachable nodes
+Time Complexity: O((V + E) log V)
+Space Complexity: O(V)
+Optimal: Yes
+Uses Heuristic: No
+Characteristics:
+  • Explores nodes in order of cost from start
+  • No heuristic information used
+  • Guaranteed shortest path on graphs with non-negative weights
+  • Slower than A* but more flexible
+  • Good for scenarios without specific target
+
+BREADTH-FIRST SEARCH (BFS)
+Description: Explores all nodes at current depth before moving deeper
+Time Complexity: O(V + E)
+Space Complexity: O(V)
+Optimal: Yes
+Uses Heuristic: No
+Characteristics:
+  • Explores level by level (breadth first)
+  • Optimal for unweighted graphs
+  • Lower computational cost than Dijkstra
+  • Balanced exploration pattern
+  • Uses queue data structure
+
+DEPTH-FIRST SEARCH (DFS)
+Description: Explores as far as possible along each branch before backtracking
+Time Complexity: O(V + E)
+Space Complexity: O(V)
+Optimal: No
+Uses Heuristic: No
+Characteristics:
+  • Explores deep into the graph before backtracking
+  • Not optimal - may not find shortest path
+  • Lower memory usage than BFS
+  • Faster initial exploration but longer paths
+  • Uses stack data structure (recursive or explicit)
+
+
+GHOST IMPLEMENTATION
+--------------------------------------------------------------------------------
+
+GHOSTS_CONFIG = [
+    {
+        "name": "A*",
+        "algorithm": "astar",      # Uses A* algorithm
+        "color": RED,
+        "initial_tile": (9, 9),
+        "speed": 0.062,
+        "release_at": 0,
+    },
+    {
+        "name": "BFS",
+        "algorithm": "bfs",        # Uses BFS algorithm
+        "color": GHOST_BLUE,
+        "initial_tile": (10, 9),
+        "speed": 0.055,
+        "release_at": 20,
+    },
+    {
+        "name": "DIJK",
+        "algorithm": "dijkstra",   # Uses Dijkstra algorithm
+        "color": GHOST_ORANGE,
+        "initial_tile": (11, 9),
+        "speed": 0.06,
+        "release_at": 45,
+    },
+]
+
+Note: DFS can be used by adding to GHOSTS_CONFIG with "algorithm": "dfs"
+
+
+PERFORMANCE METRICS
+--------------------------------------------------------------------------------
+No performance data collected yet. Run the game to generate metrics.
+
+WHY THESE ALGORITHMS
+--------------------------------------------------------------------------------
+
+A* (Ghost 1 - Red):
+  • Most efficient for pathfinding with a known target
+  • Uses heuristic to guide search toward player
+  • Guarantees shortest path while being faster than Dijkstra
+  • Released immediately to provide difficulty
+
+BFS (Ghost 2 - Blue):
+  • Good balance between simplicity and optimality
+  • Explores all possibilities at same depth before going deeper
+  • Finds optimal path on unweighted grids
+  • Released after 20 pellets eaten
+
+Dijkstra (Ghost 3 - Orange):
+  • Finds shortest path from a source to all nodes
+  • No heuristic, so more computationally intensive
+  • Demonstrates difference between uninformed search
+  • Released after 45 pellets eaten
+
+DFS (Available for extension):
+  • Demonstrates non-optimal pathfinding
+  • Lower memory usage than BFS
+  • Good for comparison to show why A* and Dijkstra are better
+  • Can be toggled to show path quality differences
+
+
+CONCLUSION
+--------------------------------------------------------------------------------
+
+This Pac-Man implementation demonstrates practical application of four fundamental
+graph search algorithms. Each algorithm has different trade-offs:
+
+- A* provides optimal AND efficient pathfinding (best overall)
+- Dijkstra provides optimal pathfinding without heuristics
+- BFS provides optimal pathfinding with simple implementation  
+- DFS provides non-optimal pathfinding with lowest memory usage
+
+The game shows how algorithm choice affects AI behavior and game difficulty.
+
+================================================================================
