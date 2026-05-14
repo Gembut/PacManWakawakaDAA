@@ -97,18 +97,18 @@ class PlayerState:
 
     def eat_pellets(self, pellets, power_pellets):
         """Check and handle pellet eating"""
-        eaten_pellet = False
+        eaten_food = None
 
         if self.tile in pellets:
             pellets.remove(self.tile)
             self.score += 10
             self.pellets_eaten += 1
-            eaten_pellet = True
+            eaten_food = "pellet"
 
         if self.tile in power_pellets:
             power_pellets.remove(self.tile)
             self.score += 50
             self.pellets_eaten += 1
-            eaten_pellet = True
+            eaten_food = "power"
 
-        return eaten_pellet
+        return eaten_food

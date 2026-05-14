@@ -2,9 +2,8 @@
 Ghost logic and behavior
 """
 
-import pygame
 from config import GHOSTS_CONFIG, TILE_SIZE, FPS
-from map import tile_center, ghost_neighbors, is_ghost_walkable
+from map import GHOST_EXIT_TILES, tile_center, ghost_neighbors, is_ghost_walkable
 from algorithm.pathfinding import grid_distance
 
 
@@ -28,6 +27,7 @@ def create_ghost(config):
         "active": config["release_at"] == 0,
         "eaten": False,
         "ignore_frightened": False,
+        "waiting_for_power_end": False,
     }
 
 
@@ -36,7 +36,7 @@ def create_all_ghosts():
     return [create_ghost(config) for config in GHOSTS_CONFIG]
 
 
-def reset_ghost_position(ghost):
+def reset_ghost_position(ghost, active=False):
     """Reset ghost to initial position"""
     ghost["tile"] = ghost["initial_tile"]
     ghost["target_tile"] = ghost["initial_tile"]
@@ -45,8 +45,10 @@ def reset_ghost_position(ghost):
     ghost["target_pos"] = ghost["pos"].copy()
     ghost["progress"] = 1.0
     ghost["wrapping"] = False
+    ghost["active"] = active
     ghost["eaten"] = False
     ghost["ignore_frightened"] = False
+    ghost["waiting_for_power_end"] = False
 
 
 def frightened_ghost_target(ghost, player_tile):
@@ -58,9 +60,30 @@ def frightened_ghost_target(ghost, player_tile):
     return max(choices, key=lambda tile: grid_distance(tile, player_tile))
 
 
+def ghost_exit_is_busy(ghosts):
+    """Check whether an active ghost is still occupying the cage exit path."""
+    for ghost in ghosts:
+        if not ghost["active"] and not ghost["eaten"]:
+            continue
+
+        if ghost["tile"] in GHOST_EXIT_TILES or ghost["target_tile"] in GHOST_EXIT_TILES:
+            return True
+
+    return False
+
+
 def release_ghosts(ghosts, pellets_eaten):
     """Release the next eligible ghost based on pellets eaten."""
-    locked_ghosts = [ghost for ghost in ghosts if not ghost["active"] and not ghost["eaten"]]
+    if ghost_exit_is_busy(ghosts):
+        return None
+
+    locked_ghosts = [
+        ghost
+        for ghost in ghosts
+        if not ghost["active"]
+        and not ghost["eaten"]
+        and not ghost.get("waiting_for_power_end")
+    ]
     locked_ghosts.sort(key=lambda ghost: ghost["release_at"])
 
     for ghost in locked_ghosts:
@@ -78,12 +101,16 @@ def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
     if not ghost["active"] and not ghost["eaten"]:
         return
 
+    ghost_is_frightened = (
+        is_frightened and not ghost["eaten"] and not ghost.get("ignore_frightened")
+    )
+
     # Update position if still moving
     if ghost["progress"] < 1.0:
         speed = ghost["speed"]
         if ghost["eaten"]:
             speed *= 1.8
-        elif is_frightened:
+        elif ghost_is_frightened:
             speed *= 0.7
 
         ghost["progress"] = min(1.0, ghost["progress"] + speed)
@@ -96,8 +123,11 @@ def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
 
             if ghost["eaten"] and ghost["tile"] == ghost["initial_tile"]:
                 ghost["eaten"] = False
-                ghost["active"] = True
-                ghost["ignore_frightened"] = is_frightened
+                if is_frightened:
+                    ghost["active"] = False
+                    ghost["waiting_for_power_end"] = True
+                else:
+                    ghost["active"] = True
 
         return
 
@@ -108,7 +138,7 @@ def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
         if len(path) < 2:
             return
         next_target = path[1]
-    elif is_frightened and not ghost["ignore_frightened"]:
+    elif ghost_is_frightened:
         # Frightened ghost flees
         next_target = frightened_ghost_target(ghost, player_tile)
     else:

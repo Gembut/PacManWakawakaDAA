@@ -25,6 +25,7 @@ FPS = 60
 COUNTDOWN_SECONDS = 5
 DEATH_DURATION = 90
 FRIGHTENED_DURATION = 8 * FPS
+GHOST_RELEASE_DELAY = FPS
 
 # =========================
 # COLORS (Retro Arcade Palette)

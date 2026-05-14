@@ -16,7 +16,7 @@ from config import (
 from logic.game_state import GameState
 from logic.audio import SoundManager
 from map import next_tile, wrap_tile
-from character.ghost import update_ghost, release_ghosts
+from character.ghost import update_ghost
 from algorithm.pathfinding import find_path
 from logic.render import (
     draw_background,
@@ -101,6 +101,10 @@ def main():
                     game.restart_game()
                     sounds.play_exclusive("start")
                     win_sound_played = False
+                elif event.key == pygame.K_m:
+                    game.next_map()
+                    sounds.play_exclusive("start")
+                    win_sound_played = False
                 elif event.key in [pygame.K_RIGHT, pygame.K_d]:
                     game.player.queued_direction = DIRECTIONS["right"].copy()
                 elif event.key in [pygame.K_LEFT, pygame.K_a]:
@@ -133,6 +137,7 @@ def main():
             and not game.game_over
         ):
             game.elapsed_frames += 1
+            game.update_ghost_release_cooldown()
 
             # Update player
             game.player.update()
@@ -143,24 +148,26 @@ def main():
                 if game.frightened_timer == 0:
                     for ghost in game.ghosts:
                         ghost["ignore_frightened"] = False
+                        ghost["waiting_for_power_end"] = False
 
             for ghost in game.ghosts:
                 update_ghost(ghost, game.player.tile, game.is_frightened(), find_path)
 
             # Check pellet eating
-            pellet_was_eaten = game.player.eat_pellets(
+            eaten_food = game.player.eat_pellets(
                 game.pellets, game.power_pellets
             )
+            pellet_was_eaten = eaten_food is not None
 
             # Handle power pellet activation
-            if game.player.tile in game.initial_power_pellets:
-                if game.player.tile not in game.power_pellets:  # Just eaten
-                    game.activate_power_mode()
+            if eaten_food == "power":
+                game.activate_power_mode()
 
             # Release one eligible ghost each time Pac-Man eats a pellet.
             if pellet_was_eaten:
                 sounds.start_waka()
-                release_ghosts(game.ghosts, game.player.pellets_eaten)
+
+            game.try_release_ghost()
 
             is_eating_sequence = pellet_was_eaten or player_is_moving_toward_food(
                 game.player, game.pellets, game.power_pellets
