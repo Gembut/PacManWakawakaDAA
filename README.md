@@ -29,7 +29,7 @@ This project is used to demonstrate and compare pathfinding algorithms in a maze
 
 - **BFS (Breadth-First Search):** Finds the shortest path in an unweighted graph.
 - **DFS (Depth-First Search):** Explores paths deeply before backtracking.
-- **A* Search:** Uses a heuristic to find an efficient shortest path.
+- __A* Search:__ Uses a heuristic to find an efficient shortest path.
 - **Dijkstra's Algorithm:** Finds shortest paths based on accumulated cost.
 
 ## Project Structure
