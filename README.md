@@ -78,3 +78,14 @@ python main.py
 
 - `algorithm_metrics.csv`: stores collected algorithm performance metrics.
 - `algorithm_report.txt`: contains generated analysis results.
+
+## Gallery
+Main Menu <br>
+
+Maze 1 <br>
+
+Maze 2 <br>
+
+Maze 3 <br>
+
+Maze 4 <br>
