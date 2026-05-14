@@ -11,6 +11,8 @@ def main():
 
     # Display the report
     AlgorithmReport.print_report()
+    AlgorithmReport.save_report("algorithm_report.txt")
+    print("\nReport saved to algorithm_report.txt")
 
 
 if __name__ == "__main__":
