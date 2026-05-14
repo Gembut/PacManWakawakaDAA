@@ -14,7 +14,8 @@ from config import (
     DIRECTIONS,
 )
 from logic.game_state import GameState
-from map import tile_center
+from logic.audio import SoundManager
+from map import next_tile, wrap_tile
 from character.ghost import update_ghost, release_ghosts
 from algorithm.pathfinding import find_path
 from logic.render import (
@@ -32,6 +33,15 @@ from logic.render import (
 )
 
 
+def player_is_moving_toward_food(player, pellets, power_pellets):
+    """Check whether Pac-Man is continuing into a tile that still has food."""
+    if player.direction.length_squared() == 0:
+        return False
+
+    next_food_tile = wrap_tile(next_tile(player.tile, player.direction))
+    return next_food_tile in pellets or next_food_tile in power_pellets
+
+
 def check_ghost_collision(player, ghosts, is_frightened, game_state):
     """Check collisions between player and ghosts"""
     for ghost in ghosts:
@@ -40,20 +50,24 @@ def check_ghost_collision(player, ghosts, is_frightened, game_state):
 
         distance = player.pos.distance_to(ghost["pos"])
         if distance < PLAYER_RADIUS + 9:
-            if is_frightened and not ghost["eaten"]:
+            if (
+                is_frightened
+                and not ghost["eaten"]
+                and not ghost.get("ignore_frightened")
+            ):
                 player.score += game_state.ghost_eat_score
                 game_state.ghost_eat_score *= 2
                 ghost["eaten"] = True
                 ghost["active"] = True
                 ghost["progress"] = 1.0
-                return
+                return "eat_ghost"
 
             if ghost["eaten"]:
                 continue
 
-            return True  # Collision!
+            return "death"
 
-    return False
+    return None
 
 
 def main():
@@ -65,6 +79,9 @@ def main():
 
     # Initialize game state
     game = GameState()
+    sounds = SoundManager()
+    sounds.play_exclusive("start")
+    win_sound_played = False
 
     running = True
     while running:
@@ -82,6 +99,8 @@ def main():
                     game.game_over or game.remaining_food() == 0
                 ):
                     game.restart_game()
+                    sounds.play_exclusive("start")
+                    win_sound_played = False
                 elif event.key in [pygame.K_RIGHT, pygame.K_d]:
                     game.player.queued_direction = DIRECTIONS["right"].copy()
                 elif event.key in [pygame.K_LEFT, pygame.K_a]:
@@ -105,37 +124,59 @@ def main():
             game.death_timer += 1
             if game.death_timer >= game.death_duration:
                 game.handle_death()
+                if game.game_state == "countdown":
+                    sounds.play_exclusive("start")
 
         elif (
             game.game_state == "playing"
             and game.remaining_food() > 0
             and not game.game_over
         ):
+            game.elapsed_frames += 1
+
             # Update player
             game.player.update()
 
             # Update ghosts
             if game.frightened_timer > 0:
                 game.frightened_timer -= 1
+                if game.frightened_timer == 0:
+                    for ghost in game.ghosts:
+                        ghost["ignore_frightened"] = False
 
             for ghost in game.ghosts:
                 update_ghost(ghost, game.player.tile, game.is_frightened(), find_path)
 
             # Check pellet eating
-            pellets_eaten = game.player.eat_pellets(game.pellets, game.power_pellets)
+            pellet_was_eaten = game.player.eat_pellets(
+                game.pellets, game.power_pellets
+            )
 
             # Handle power pellet activation
             if game.player.tile in game.initial_power_pellets:
                 if game.player.tile not in game.power_pellets:  # Just eaten
                     game.activate_power_mode()
 
-            # Release ghosts as pellets are eaten
-            release_ghosts(game.ghosts, game.player.pellets_eaten)
+            # Release one eligible ghost each time Pac-Man eats a pellet.
+            if pellet_was_eaten:
+                sounds.start_waka()
+                release_ghosts(game.ghosts, game.player.pellets_eaten)
+
+            is_eating_sequence = pellet_was_eaten or player_is_moving_toward_food(
+                game.player, game.pellets, game.power_pellets
+            )
+            if not is_eating_sequence:
+                sounds.stop_waka()
 
             # Check ghost collisions
-            if check_ghost_collision(
+            collision_result = check_ghost_collision(
                 game.player, game.ghosts, game.is_frightened(), game
-            ):
+            )
+            if collision_result == "eat_ghost":
+                sounds.stop_waka()
+                sounds.play_once("eat_ghost")
+            elif collision_result == "death":
+                sounds.play_exclusive("death")
                 game.game_state = "dying"
                 game.death_timer = 0
                 game.player.direction = pygame.Vector2(0, 0)
@@ -146,6 +187,29 @@ def main():
         if game.mouth_timer > 8:
             game.mouth_open = not game.mouth_open
             game.mouth_timer = 0
+
+        if game.game_state not in ["playing", "countdown"]:
+            sounds.stop_waka()
+
+        if game.remaining_food() == 0 and not win_sound_played:
+            sounds.play_exclusive("coffee_break")
+            win_sound_played = True
+
+        has_eaten_ghosts = any(ghost["eaten"] for ghost in game.ghosts)
+        has_frightened_ghosts = any(
+            ghost["active"] and not ghost["eaten"] and not ghost.get("ignore_frightened")
+            for ghost in game.ghosts
+        )
+        audio_game_state = (
+            "playing"
+            if game.game_state == "playing" and game.remaining_food() > 0
+            else "win" if game.remaining_food() == 0 else game.game_state
+        )
+        sounds.update_ghost_loop(
+            audio_game_state,
+            game.is_frightened() and has_frightened_ghosts,
+            has_eaten_ghosts,
+        )
 
         # Render
         draw_background(screen)
@@ -178,6 +242,7 @@ def main():
             game.player.lives,
             game.is_frightened(),
             game.frightened_timer,
+            game.elapsed_frames // FPS,
         )
         draw_countdown_message(screen, game.game_state, game.countdown_timer, FPS)
         draw_win_message(screen, game.remaining_food())

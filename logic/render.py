@@ -136,7 +136,7 @@ def draw_ghosts(screen, ghosts, is_frightened, frightened_timer):
 
         if ghost["eaten"]:
             draw_ghost_eyes(screen, center)
-        elif is_frightened and ghost["active"]:
+        elif is_frightened and ghost["active"] and not ghost.get("ignore_frightened"):
             flashing = frightened_timer < 360 and (frightened_timer // 10) % 2 == 0
             draw_ghost(screen, center, WHITE if flashing else FRIGHTENED_BLUE)
         else:
@@ -236,7 +236,7 @@ def draw_death_animation(
         pygame.draw.line(screen, YELLOW, inner, outer, 2)
 
 
-def draw_hud(screen, score, lives, is_frightened, frightened_timer):
+def draw_hud(screen, score, lives, is_frightened, frightened_timer, elapsed_seconds):
     """Draw the HUD (heads-up display)"""
     hud_y = MAZE_HEIGHT
     pygame.draw.rect(screen, BLACK, (0, hud_y, WIDTH, HUD_HEIGHT))
@@ -245,6 +245,9 @@ def draw_hud(screen, score, lives, is_frightened, frightened_timer):
 
     score_text = FONT.render(f"SCORE {score:04}", False, WHITE)
     title_text = TITLE_FONT.render("PAC-MAN", False, YELLOW)
+    time_text = SMALL_FONT.render(
+        f"TIME {elapsed_seconds // 60:02}:{elapsed_seconds % 60:02}", False, WHITE
+    )
     if is_frightened:
         move_text = SMALL_FONT.render(
             f"POWER {math.ceil(frightened_timer / 60)}", False, FRIGHTENED_BLUE
@@ -254,6 +257,7 @@ def draw_hud(screen, score, lives, is_frightened, frightened_timer):
     lives_text = SMALL_FONT.render("LIVES", False, WHITE)
 
     screen.blit(score_text, (14, hud_y + 12))
+    screen.blit(time_text, (14, hud_y + 42))
     screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, hud_y + 8))
     screen.blit(move_text, (WIDTH // 2 - move_text.get_width() // 2, hud_y + 40))
     screen.blit(lives_text, (WIDTH - 122, hud_y + 14))

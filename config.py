@@ -22,7 +22,7 @@ HEIGHT = MAZE_HEIGHT + HUD_HEIGHT
 # GAME TIMINGS
 # =========================
 FPS = 60
-COUNTDOWN_SECONDS = 3
+COUNTDOWN_SECONDS = 5
 DEATH_DURATION = 90
 FRIGHTENED_DURATION = 8 * FPS
 
@@ -79,7 +79,7 @@ GHOSTS_CONFIG = [
         "color": GHOST_BLUE,
         "initial_tile": (10, 9),
         "speed": 0.055,
-        "release_at": 0,
+        "release_at": 30,
     },
     {
         "name": "DIJK",
@@ -87,16 +87,9 @@ GHOSTS_CONFIG = [
         "color": GHOST_ORANGE,
         "initial_tile": (11, 9),
         "speed": 0.06,
-        "release_at": 0,
+        "release_at": 60,
     },
-    {
-        "name": "DFS",
-        "algorithm": "dfs",
-        "color": YELLOW,
-        "initial_tile": (12, 9),
-        "speed": 0.058,
-        "release_at": 0,
-    },
+
 ]
 
 # =========================

@@ -27,6 +27,7 @@ def create_ghost(config):
         "release_at": config["release_at"],
         "active": config["release_at"] == 0,
         "eaten": False,
+        "ignore_frightened": False,
     }
 
 
@@ -45,6 +46,7 @@ def reset_ghost_position(ghost):
     ghost["progress"] = 1.0
     ghost["wrapping"] = False
     ghost["eaten"] = False
+    ghost["ignore_frightened"] = False
 
 
 def frightened_ghost_target(ghost, player_tile):
@@ -57,10 +59,16 @@ def frightened_ghost_target(ghost, player_tile):
 
 
 def release_ghosts(ghosts, pellets_eaten):
-    """Release ghosts based on pellets eaten"""
-    for ghost in ghosts:
+    """Release the next eligible ghost based on pellets eaten."""
+    locked_ghosts = [ghost for ghost in ghosts if not ghost["active"] and not ghost["eaten"]]
+    locked_ghosts.sort(key=lambda ghost: ghost["release_at"])
+
+    for ghost in locked_ghosts:
         if pellets_eaten >= ghost["release_at"]:
             ghost["active"] = True
+            return ghost
+
+    return None
 
 
 def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
@@ -89,6 +97,7 @@ def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
             if ghost["eaten"] and ghost["tile"] == ghost["initial_tile"]:
                 ghost["eaten"] = False
                 ghost["active"] = True
+                ghost["ignore_frightened"] = is_frightened
 
         return
 
@@ -99,7 +108,7 @@ def update_ghost(ghost, player_tile, is_frightened, pathfinding_func):
         if len(path) < 2:
             return
         next_target = path[1]
-    elif is_frightened:
+    elif is_frightened and not ghost["ignore_frightened"]:
         # Frightened ghost flees
         next_target = frightened_ghost_target(ghost, player_tile)
     else:

@@ -26,7 +26,7 @@ GAME_MAP = [
     "    #.#       #.#  ",
     "#####.# ##=## #.###",
     "     .  #   #  .   ",
-    "#####.# ## ## #.###",
+    "#####.# ##### #.###",
     "    #.#       #.#  ",
     "#####.# ##### #.###",
     "#........#........#",
@@ -156,12 +156,27 @@ def wrapped_step_direction(start, target):
     return pygame.Vector2(target[0] - start[0], target[1] - start[1])
 
 
+GHOST_DOOR_TILE = (10, 8)
+GHOST_CAGE_TILES = {(9, 9), (10, 9), (11, 9)}
+
+
+def can_ghost_move_between(start, target):
+    """Keep the ghost cage connected to the maze only through the door."""
+    if start in GHOST_CAGE_TILES and target not in GHOST_CAGE_TILES:
+        return target == GHOST_DOOR_TILE
+
+    if target in GHOST_CAGE_TILES and start not in GHOST_CAGE_TILES:
+        return start == GHOST_DOOR_TILE
+
+    return True
+
+
 def ghost_neighbors(tile):
     """Get valid neighbor tiles for a ghost"""
     neighbors = []
     for move_direction in DIRECTIONS.values():
         candidate = wrap_tile(next_tile(tile, move_direction))
-        if is_ghost_walkable(candidate):
+        if is_ghost_walkable(candidate) and can_ghost_move_between(tile, candidate):
             neighbors.append(candidate)
 
     return neighbors

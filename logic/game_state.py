@@ -2,7 +2,7 @@
 Game state management
 """
 
-from config import FPS, FRIGHTENED_DURATION
+from config import FPS, COUNTDOWN_SECONDS, FRIGHTENED_DURATION
 from map import parse_game_map, GAME_MAP
 from character.player import PlayerState
 from character.ghost import create_all_ghosts, reset_ghost_position, release_ghosts
@@ -31,11 +31,12 @@ class GameState:
         # Game state
         self.game_state = "countdown"
         self.game_over = False
-        self.countdown_timer = 3 * FPS
+        self.countdown_timer = COUNTDOWN_SECONDS * FPS
         self.death_timer = 0
         self.death_duration = 90
         self.frightened_timer = 0
         self.ghost_eat_score = 200
+        self.elapsed_frames = 0
 
         # Animation
         self.mouth_timer = 0
@@ -52,7 +53,7 @@ class GameState:
     def reset_round(self):
         """Reset for a new round"""
         self.player.reset_position(self.player_start_tile)
-        self.countdown_timer = 3 * FPS
+        self.countdown_timer = COUNTDOWN_SECONDS * FPS
         self.frightened_timer = 0
         self.ghost_eat_score = 200
 
@@ -71,10 +72,11 @@ class GameState:
 
         self.game_state = "countdown"
         self.game_over = False
-        self.countdown_timer = 3 * FPS
+        self.countdown_timer = COUNTDOWN_SECONDS * FPS
         self.death_timer = 0
         self.frightened_timer = 0
         self.ghost_eat_score = 200
+        self.elapsed_frames = 0
 
         self.ghosts = create_all_ghosts()
         self.reset_round()
@@ -82,7 +84,7 @@ class GameState:
     def start_countdown(self):
         """Start countdown before game starts"""
         self.game_state = "countdown"
-        self.countdown_timer = 3 * FPS
+        self.countdown_timer = COUNTDOWN_SECONDS * FPS
 
     def handle_death(self):
         """Handle player death"""
@@ -99,3 +101,5 @@ class GameState:
         """Activate frightened/power mode"""
         self.frightened_timer = FRIGHTENED_DURATION
         self.ghost_eat_score = 200
+        for ghost in self.ghosts:
+            ghost["ignore_frightened"] = False
