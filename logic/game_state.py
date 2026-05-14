@@ -2,8 +2,6 @@
 Game state management
 """
 
-import random
-
 from config import FPS, COUNTDOWN_SECONDS, FRIGHTENED_DURATION, GHOST_RELEASE_DELAY
 from map import GAME_MAPS, parse_game_map, set_active_map
 from character.player import PlayerState
@@ -13,8 +11,8 @@ from character.ghost import create_all_ghosts, reset_ghost_position, release_gho
 class GameState:
     """Central game state manager"""
 
-    def __init__(self, map_index=None):
-        self.map_index = self.random_map_index() if map_index is None else map_index
+    def __init__(self, map_index=0):
+        self.map_index = map_index
         self.ghost_release_cooldown = 0
 
         # Parse map
@@ -68,21 +66,10 @@ class GameState:
         for ghost in self.ghosts:
             reset_ghost_position(ghost)
 
-    def random_map_index(self):
-        """Pick a random map, preferring a different one when possible."""
-        if len(GAME_MAPS) <= 1:
-            return 0
-
-        current_map_index = getattr(self, "map_index", None)
-        choices = [
-            index for index in range(len(GAME_MAPS)) if index != current_map_index
-        ]
-        return random.choice(choices)
-
-    def restart_game(self, randomize_map=True):
+    def restart_game(self, map_index=None):
         """Restart the entire game"""
-        if randomize_map:
-            self.map_index = self.random_map_index()
+        if map_index is not None:
+            self.map_index = map_index
 
         walls, pellets, power_pellets, player_start_tile = parse_game_map(
             set_active_map(self.map_index)
@@ -116,7 +103,7 @@ class GameState:
     def next_map(self):
         """Switch to the next map and restart the game."""
         self.map_index = (self.map_index + 1) % len(GAME_MAPS)
-        self.restart_game(randomize_map=False)
+        self.restart_game()
 
     def start_countdown(self):
         """Start countdown before game starts"""

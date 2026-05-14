@@ -79,6 +79,18 @@ class SoundManager:
         self.stop_all()
         self.play(sound_name)
 
+    def loop_event(self, sound_name):
+        """Loop one event sound without stacking it."""
+        if not self.enabled:
+            return
+
+        sound = self.sounds.get(sound_name)
+        if sound is not None and self.event_channel is not None:
+            if self.current_event == sound_name and self.event_channel.get_busy():
+                return
+            self.event_channel.play(sound, loops=-1)
+            self.current_event = sound_name
+
     def sound_length(self, sound_name):
         """Return the sound length in seconds, or 0 when unavailable."""
         sound = self.sounds.get(sound_name)

@@ -335,3 +335,115 @@ def draw_game_over_message(screen, game_over):
 
     screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2 - 42))
     screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, HEIGHT // 2 - 6))
+
+
+def draw_menu(screen, maps, selected_map, frame_count):
+    """Draw the retro start menu."""
+    screen.fill(BLACK)
+    ticks = pygame.time.get_ticks()
+    time_seconds = ticks / 1000
+
+    for y in range(0, HEIGHT, TILE_SIZE):
+        pygame.draw.line(screen, (5, 5, 20), (0, y), (WIDTH, y))
+    for x in range(0, WIDTH, TILE_SIZE):
+        pygame.draw.line(screen, (5, 5, 20), (x, 0), (x, HEIGHT))
+
+    marquee = pygame.Rect(20, 18, WIDTH - 40, 76)
+    pygame.draw.rect(screen, BLACK, marquee)
+    pygame.draw.rect(screen, BLUE, marquee, 4)
+    pygame.draw.rect(screen, CYAN, marquee.inflate(-8, -8), 1)
+
+    title = pygame.font.SysFont("consolas", 42, bold=True).render(
+        "PAC-MAN", False, YELLOW
+    )
+    subtitle = SMALL_FONT.render("WAKA WAKA DAA", False, HUD_TEXT)
+    screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 28))
+    screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, 72))
+
+    chase_y = 132 + math.sin(time_seconds * 3.0) * 3
+    chase_start = -80
+    chase_width = WIDTH + 160
+    chase_x = chase_start + ((time_seconds * 92) % chase_width)
+    pac_x = chase_x + 156
+    mouth_open = math.sin(time_seconds * 14) > -0.25
+
+    pygame.draw.line(
+        screen,
+        BLUE_DARK,
+        (48, int(chase_y + 30)),
+        (WIDTH - 48, int(chase_y + 30)),
+        2,
+    )
+    for pellet_x in range(58, WIDTH - 48, 22):
+        pulse = 1 + int((ticks // 180 + pellet_x // 22) % 2 == 0)
+        pygame.draw.circle(screen, PELLET, (pellet_x, int(chase_y + 30)), pulse)
+
+    for index, color in enumerate([RED, CYAN, (255, 170, 45)]):
+        ghost_x = chase_x - index * 38
+        ghost_y = chase_y + math.sin(time_seconds * 5 + index) * 2
+        if -30 <= ghost_x <= WIDTH + 30:
+            draw_ghost(screen, (round(ghost_x), round(ghost_y)), color)
+
+    if -24 <= pac_x <= WIDTH + 24:
+        draw_player(
+            screen,
+            pygame.Vector2(pac_x, chase_y),
+            pygame.Vector2(1, 0),
+            mouth_open,
+            13,
+        )
+
+    heading = FONT.render("SELECT MAP", False, WHITE)
+    screen.blit(heading, (WIDTH // 2 - heading.get_width() // 2, 170))
+
+    for index in range(len(maps)):
+        y = 208 + index * 34
+        selected = index == selected_map
+        color = YELLOW if selected else HUD_TEXT
+        label = FONT.render(f"{index + 1:02}  MAZE {index + 1}", False, color)
+        if selected:
+            pygame.draw.rect(screen, BLUE_DARK, (126, y - 5, 280, 30))
+            pygame.draw.rect(screen, BLUE, (126, y - 5, 280, 30), 2)
+            pointer = FONT.render(">", False, YELLOW)
+            screen.blit(pointer, (100, y - 1))
+        screen.blit(label, (146, y))
+
+    preview_map = maps[selected_map]
+    cell = 5
+    preview_width = len(preview_map[0]) * cell
+    preview_height = len(preview_map) * cell
+    preview_x = WIDTH // 2 - preview_width // 2
+    preview_y = 360
+    pygame.draw.rect(
+        screen,
+        BLUE,
+        (preview_x - 8, preview_y - 8, preview_width + 16, preview_height + 16),
+        2,
+    )
+    for row_index, row in enumerate(preview_map):
+        for col_index, tile in enumerate(row):
+            rect = pygame.Rect(
+                preview_x + col_index * cell,
+                preview_y + row_index * cell,
+                cell,
+                cell,
+            )
+            if tile == "#":
+                pygame.draw.rect(screen, BLUE_DARK, rect)
+            elif tile == ".":
+                pygame.draw.circle(screen, PELLET, rect.center, 1)
+            elif tile == "o":
+                pygame.draw.circle(screen, POWER_PELLET, rect.center, 2)
+            elif tile == "P":
+                pygame.draw.circle(screen, YELLOW, rect.center, 2)
+            elif tile == "=":
+                pygame.draw.rect(screen, PINK, rect)
+
+    hint = SMALL_FONT.render("UP/DOWN OR LEFT/RIGHT: MAP   ENTER/SPACE: START", False, WHITE)
+    quit_hint = SMALL_FONT.render("ESC: QUIT", False, HUD_TEXT)
+    blink = (frame_count // 30) % 2 == 0
+    if blink:
+        start = FONT.render("PRESS ENTER", False, YELLOW)
+        screen.blit(start, (WIDTH // 2 - start.get_width() // 2, HEIGHT - 92))
+    screen.blit(hint, (WIDTH // 2 - hint.get_width() // 2, HEIGHT - 58))
+    screen.blit(quit_hint, (WIDTH // 2 - quit_hint.get_width() // 2, HEIGHT - 34))

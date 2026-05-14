@@ -1,7 +1,7 @@
 ================================================================================
 PAC-MAN GAME - ALGORITHM ANALYSIS REPORT
 ================================================================================
-Generated: 2026-05-14 15:57:34
+Generated: 2026-05-14 16:04:11
 
 PROJECT OVERVIEW
 --------------------------------------------------------------------------------
@@ -102,31 +102,31 @@ PERFORMANCE METRICS
 Algorithm Performance Statistics:
 
 ASTAR
-  Calls:                 110
-  Successful Searches:   110
+  Calls:                 1
+  Successful Searches:   1
   Failed Searches:       0
-  Avg Execution Time:    0.165 ms
-  Avg Path Length:       10.8 tiles
-  Total Time:            18.172 ms
-  Avg Nodes Explored:    19.6
+  Avg Execution Time:    0.258 ms
+  Avg Path Length:       18.0 tiles
+  Total Time:            0.258 ms
+  Avg Nodes Explored:    39.0
 
 BFS
-  Calls:                 62
-  Successful Searches:   62
+  Calls:                 65
+  Successful Searches:   65
   Failed Searches:       0
-  Avg Execution Time:    0.278 ms
-  Avg Path Length:       10.2 tiles
-  Total Time:            17.254 ms
-  Avg Nodes Explored:    61.6
+  Avg Execution Time:    0.326 ms
+  Avg Path Length:       10.5 tiles
+  Total Time:            21.211 ms
+  Avg Nodes Explored:    47.2
 
 DIJKSTRA
-  Calls:                 55
-  Successful Searches:   55
+  Calls:                 19
+  Successful Searches:   19
   Failed Searches:       0
-  Avg Execution Time:    0.343 ms
-  Avg Path Length:       11.1 tiles
-  Total Time:            18.841 ms
-  Avg Nodes Explored:    73.7
+  Avg Execution Time:    0.267 ms
+  Avg Path Length:       10.4 tiles
+  Total Time:            5.066 ms
+  Avg Nodes Explored:    36.5
 
 DFS
   Calls:                 17

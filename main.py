@@ -15,7 +15,7 @@ from config import (
 )
 from logic.game_state import GameState
 from logic.audio import SoundManager
-from map import next_tile, wrap_tile
+from map import GAME_MAPS, next_tile, wrap_tile
 from character.ghost import update_ghost
 from algorithm.pathfinding import find_path
 from logic.render import (
@@ -28,6 +28,7 @@ from logic.render import (
     draw_death_animation,
     draw_hud,
     draw_countdown_message,
+    draw_menu,
     draw_win_message,
     draw_game_over_message,
 )
@@ -78,9 +79,11 @@ def main():
     clock = pygame.time.Clock()
 
     # Initialize game state
-    game = GameState()
+    selected_map = 0
+    game = GameState(selected_map)
     sounds = SoundManager()
-    sounds.play_exclusive("start")
+    sounds.loop_event("coffee_break")
+    screen_state = "menu"
     win_sound_played = False
 
     running = True
@@ -95,15 +98,29 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                elif screen_state == "menu":
+                    if event.key in [pygame.K_DOWN, pygame.K_RIGHT, pygame.K_d]:
+                        selected_map = (selected_map + 1) % len(GAME_MAPS)
+                        sounds.play_once("credit")
+                    elif event.key in [pygame.K_UP, pygame.K_LEFT, pygame.K_a]:
+                        selected_map = (selected_map - 1) % len(GAME_MAPS)
+                        sounds.play_once("credit")
+                    elif event.key in [pygame.K_RETURN, pygame.K_SPACE]:
+                        game.restart_game(selected_map)
+                        sounds.play_exclusive("start")
+                        screen_state = "game"
+                        win_sound_played = False
                 elif event.key == pygame.K_r and (
                     game.game_over or game.remaining_food() == 0
                 ):
-                    game.restart_game()
-                    sounds.play_exclusive("start")
+                    sounds.stop_all()
+                    sounds.loop_event("coffee_break")
+                    screen_state = "menu"
                     win_sound_played = False
                 elif event.key == pygame.K_m:
-                    game.next_map()
-                    sounds.play_exclusive("start")
+                    screen_state = "menu"
+                    sounds.stop_all()
+                    sounds.loop_event("coffee_break")
                     win_sound_played = False
                 elif event.key in [pygame.K_RIGHT, pygame.K_d]:
                     game.player.queued_direction = DIRECTIONS["right"].copy()
@@ -114,8 +131,11 @@ def main():
                 elif event.key in [pygame.K_DOWN, pygame.K_s]:
                     game.player.queued_direction = DIRECTIONS["down"].copy()
 
+        if screen_state == "menu":
+            sounds.loop_event("coffee_break")
+
         # Update game logic
-        if (
+        elif (
             game.game_state == "countdown"
             and game.remaining_food() > 0
             and not game.game_over
@@ -195,10 +215,10 @@ def main():
             game.mouth_open = not game.mouth_open
             game.mouth_timer = 0
 
-        if game.game_state not in ["playing", "countdown"]:
+        if screen_state != "game" or game.game_state not in ["playing", "countdown"]:
             sounds.stop_waka()
 
-        if game.remaining_food() == 0 and not win_sound_played:
+        if screen_state == "game" and game.remaining_food() == 0 and not win_sound_played:
             sounds.play_exclusive("coffee_break")
             win_sound_played = True
 
@@ -209,7 +229,9 @@ def main():
         )
         audio_game_state = (
             "playing"
-            if game.game_state == "playing" and game.remaining_food() > 0
+            if screen_state == "game"
+            and game.game_state == "playing"
+            and game.remaining_food() > 0
             else "win" if game.remaining_food() == 0 else game.game_state
         )
         sounds.update_ghost_loop(
@@ -219,41 +241,44 @@ def main():
         )
 
         # Render
-        draw_background(screen)
-        draw_pellets(screen, game.pellets, game.power_pellets)
-        draw_walls(screen, game.walls)
-        draw_ghost_cage(screen)
-        draw_ghosts(screen, game.ghosts, game.is_frightened(), game.frightened_timer)
-
-        if game.game_state == "dying":
-            draw_death_animation(
-                screen,
-                game.player.pos,
-                game.player.facing_direction,
-                game.death_timer,
-                game.death_duration,
-                PLAYER_RADIUS,
-            )
+        if screen_state == "menu":
+            draw_menu(screen, GAME_MAPS, selected_map, pygame.time.get_ticks() // 16)
         else:
-            draw_player(
-                screen,
-                game.player.pos,
-                game.player.facing_direction,
-                game.mouth_open,
-                PLAYER_RADIUS,
-            )
+            draw_background(screen)
+            draw_pellets(screen, game.pellets, game.power_pellets)
+            draw_walls(screen, game.walls)
+            draw_ghost_cage(screen)
+            draw_ghosts(screen, game.ghosts, game.is_frightened(), game.frightened_timer)
 
-        draw_hud(
-            screen,
-            game.player.score,
-            game.player.lives,
-            game.is_frightened(),
-            game.frightened_timer,
-            game.elapsed_frames // FPS,
-        )
-        draw_countdown_message(screen, game.game_state, game.countdown_timer, FPS)
-        draw_win_message(screen, game.remaining_food())
-        draw_game_over_message(screen, game.game_over)
+            if game.game_state == "dying":
+                draw_death_animation(
+                    screen,
+                    game.player.pos,
+                    game.player.facing_direction,
+                    game.death_timer,
+                    game.death_duration,
+                    PLAYER_RADIUS,
+                )
+            else:
+                draw_player(
+                    screen,
+                    game.player.pos,
+                    game.player.facing_direction,
+                    game.mouth_open,
+                    PLAYER_RADIUS,
+                )
+
+            draw_hud(
+                screen,
+                game.player.score,
+                game.player.lives,
+                game.is_frightened(),
+                game.frightened_timer,
+                game.elapsed_frames // FPS,
+            )
+            draw_countdown_message(screen, game.game_state, game.countdown_timer, FPS)
+            draw_win_message(screen, game.remaining_food())
+            draw_game_over_message(screen, game.game_over)
 
         pygame.display.flip()
 
