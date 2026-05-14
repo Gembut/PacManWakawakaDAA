@@ -1,7 +1,7 @@
 ================================================================================
 PAC-MAN GAME - ALGORITHM ANALYSIS REPORT
 ================================================================================
-Generated: 2026-05-14 16:24:45
+Generated: 2026-05-14 17:13:59
 
 PROJECT OVERVIEW
 --------------------------------------------------------------------------------
@@ -18,10 +18,10 @@ Space Complexity: O(V)
 Optimal: Yes
 Uses Heuristic: Yes
 Characteristics:
-  • Uses heuristic (grid distance) to estimate distance to goal
-  • More efficient than Dijkstra for pathfinding
-  • Guaranteed to find shortest path if heuristic is admissible
-  • Perfect for single target pathfinding (player location)
+  â€¢ Uses heuristic (grid distance) to estimate distance to goal
+  â€¢ More efficient than Dijkstra for pathfinding
+  â€¢ Guaranteed to find shortest path if heuristic is admissible
+  â€¢ Perfect for single target pathfinding (player location)
 
 DIJKSTRA'S ALGORITHM
 Description: Uniform cost search that finds shortest path from start to all reachable nodes
@@ -30,11 +30,11 @@ Space Complexity: O(V)
 Optimal: Yes
 Uses Heuristic: No
 Characteristics:
-  • Explores nodes in order of cost from start
-  • No heuristic information used
-  • Guaranteed shortest path on graphs with non-negative weights
-  • Slower than A* but more flexible
-  • Good for scenarios without specific target
+  â€¢ Explores nodes in order of cost from start
+  â€¢ No heuristic information used
+  â€¢ Guaranteed shortest path on graphs with non-negative weights
+  â€¢ Slower than A* but more flexible
+  â€¢ Good for scenarios without specific target
 
 BREADTH-FIRST SEARCH (BFS)
 Description: Explores all nodes at current depth before moving deeper
@@ -43,11 +43,11 @@ Space Complexity: O(V)
 Optimal: Yes
 Uses Heuristic: No
 Characteristics:
-  • Explores level by level (breadth first)
-  • Optimal for unweighted graphs
-  • Lower computational cost than Dijkstra
-  • Balanced exploration pattern
-  • Uses queue data structure
+  â€¢ Explores level by level (breadth first)
+  â€¢ Optimal for unweighted graphs
+  â€¢ Lower computational cost than Dijkstra
+  â€¢ Balanced exploration pattern
+  â€¢ Uses queue data structure
 
 DEPTH-FIRST SEARCH (DFS)
 Description: Explores as far as possible along each branch before backtracking
@@ -56,11 +56,11 @@ Space Complexity: O(V)
 Optimal: No
 Uses Heuristic: No
 Characteristics:
-  • Explores deep into the graph before backtracking
-  • Not optimal - may not find shortest path
-  • Lower memory usage than BFS
-  • Faster initial exploration but longer paths
-  • Uses stack data structure (recursive or explicit)
+  â€¢ Explores deep into the graph before backtracking
+  â€¢ Not optimal - may not find shortest path
+  â€¢ Lower memory usage than BFS
+  â€¢ Faster initial exploration but longer paths
+  â€¢ Uses stack data structure (recursive or explicit)
 
 
 GHOST IMPLEMENTATION
@@ -102,31 +102,31 @@ PERFORMANCE METRICS
 Algorithm Performance Statistics:
 
 ASTAR
-  Calls:                 10
-  Successful Searches:   10
+  Calls:                 189
+  Successful Searches:   189
   Failed Searches:       0
-  Avg Execution Time:    0.472 ms
-  Avg Path Length:       28.5 tiles
-  Total Time:            4.718 ms
-  Avg Nodes Explored:    67.7
+  Avg Execution Time:    0.296 ms
+  Avg Path Length:       15.3 tiles
+  Total Time:            55.852 ms
+  Avg Nodes Explored:    42.2
 
 BFS
-  Calls:                 65
-  Successful Searches:   65
+  Calls:                 101
+  Successful Searches:   101
   Failed Searches:       0
-  Avg Execution Time:    0.326 ms
-  Avg Path Length:       10.5 tiles
-  Total Time:            21.211 ms
-  Avg Nodes Explored:    47.2
+  Avg Execution Time:    0.330 ms
+  Avg Path Length:       12.7 tiles
+  Total Time:            33.316 ms
+  Avg Nodes Explored:    66.3
 
 DIJKSTRA
-  Calls:                 19
-  Successful Searches:   19
+  Calls:                 88
+  Successful Searches:   88
   Failed Searches:       0
-  Avg Execution Time:    0.267 ms
-  Avg Path Length:       10.4 tiles
-  Total Time:            5.066 ms
-  Avg Nodes Explored:    36.5
+  Avg Execution Time:    0.370 ms
+  Avg Path Length:       13.1 tiles
+  Total Time:            32.566 ms
+  Avg Nodes Explored:    65.9
 
 DFS
   Calls:                 17
@@ -142,28 +142,28 @@ WHY THESE ALGORITHMS
 --------------------------------------------------------------------------------
 
 A* (Ghost 1 - Red):
-  • Most efficient for pathfinding with a known target
-  • Uses heuristic to guide search toward player
-  • Guarantees shortest path while being faster than Dijkstra
-  • Released immediately to provide difficulty
+  â€¢ Most efficient for pathfinding with a known target
+  â€¢ Uses heuristic to guide search toward player
+  â€¢ Guarantees shortest path while being faster than Dijkstra
+  â€¢ Released immediately to provide difficulty
 
 BFS (Ghost 2 - Blue):
-  • Good balance between simplicity and optimality
-  • Explores all possibilities at same depth before going deeper
-  • Finds optimal path on unweighted grids
-  • Released after 20 pellets eaten
+  â€¢ Good balance between simplicity and optimality
+  â€¢ Explores all possibilities at same depth before going deeper
+  â€¢ Finds optimal path on unweighted grids
+  â€¢ Released after 20 pellets eaten
 
 Dijkstra (Ghost 3 - Orange):
-  • Finds shortest path from a source to all nodes
-  • No heuristic, so more computationally intensive
-  • Demonstrates difference between uninformed search
-  • Released after 45 pellets eaten
+  â€¢ Finds shortest path from a source to all nodes
+  â€¢ No heuristic, so more computationally intensive
+  â€¢ Demonstrates difference between uninformed search
+  â€¢ Released after 45 pellets eaten
 
 DFS (Available for extension):
-  • Demonstrates non-optimal pathfinding
-  • Lower memory usage than BFS
-  • Good for comparison to show why A* and Dijkstra are better
-  • Can be toggled to show path quality differences
+  â€¢ Demonstrates non-optimal pathfinding
+  â€¢ Lower memory usage than BFS
+  â€¢ Good for comparison to show why A* and Dijkstra are better
+  â€¢ Can be toggled to show path quality differences
 
 
 CONCLUSION
