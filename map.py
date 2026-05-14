@@ -112,10 +112,42 @@ GAME_MAPS = [
 
 GAME_MAP = GAME_MAPS[0]
 
+MAP_THEMES = [
+    {
+        "name": "Blue Arcade",
+        "wall": (33, 33, 255),
+        "inner": (0, 0, 120),
+        "edge": (0, 255, 255),
+    },
+    {
+        "name": "Cherry Pink",
+        "wall": (255, 60, 170),
+        "inner": (120, 0, 80),
+        "edge": (255, 190, 235),
+    },
+    {
+        "name": "Lime Circuit",
+        "wall": (40, 220, 90),
+        "inner": (0, 95, 45),
+        "edge": (190, 255, 150),
+    },
+    {
+        "name": "Orange Neon",
+        "wall": (255, 150, 35),
+        "inner": (120, 55, 0),
+        "edge": (255, 225, 120),
+    },
+]
+
 
 def get_game_map(map_index):
     """Return a map layout by index, wrapping around the available layouts."""
     return GAME_MAPS[map_index % len(GAME_MAPS)]
+
+
+def get_map_theme(map_index):
+    """Return the visual theme for a map layout."""
+    return MAP_THEMES[map_index % len(MAP_THEMES)]
 
 
 def set_active_map(map_index):

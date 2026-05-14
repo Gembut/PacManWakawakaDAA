@@ -39,13 +39,17 @@ def draw_background(screen):
         pygame.draw.line(screen, (6, 6, 22), (x, 0), (x, MAZE_HEIGHT))
 
 
-def draw_walls(screen, walls):
+def draw_walls(screen, walls, theme=None):
     """Draw all wall tiles"""
+    wall_color = theme["wall"] if theme else BLUE
+    inner_color = theme["inner"] if theme else BLUE_DARK
+    edge_color = theme["edge"] if theme else CYAN
+
     for wall in walls:
-        pygame.draw.rect(screen, BLUE, wall)
+        pygame.draw.rect(screen, wall_color, wall)
         inner = wall.inflate(-8, -8)
-        pygame.draw.rect(screen, BLUE_DARK, inner)
-        pygame.draw.rect(screen, CYAN, wall, 1)
+        pygame.draw.rect(screen, inner_color, inner)
+        pygame.draw.rect(screen, edge_color, wall, 1)
 
 
 def draw_pellets(screen, pellets, power_pellets):
@@ -67,15 +71,17 @@ def draw_pellets(screen, pellets, power_pellets):
         pygame.draw.circle(screen, PINK, center, 4 + pulse)
 
 
-def draw_ghost_cage(screen):
+def draw_ghost_cage(screen, theme=None):
     """Draw the ghost cage"""
+    wall_color = theme["wall"] if theme else BLUE
+    edge_color = theme["edge"] if theme else CYAN
     cage_rect = pygame.Rect(8 * TILE_SIZE, 8 * TILE_SIZE, 5 * TILE_SIZE, 3 * TILE_SIZE)
     inner_rect = cage_rect.inflate(-10, -8)
     door_rect = pygame.Rect(10 * TILE_SIZE, 8 * TILE_SIZE + 9, TILE_SIZE, 10)
 
     pygame.draw.rect(screen, BLACK, inner_rect)
-    pygame.draw.rect(screen, BLUE, cage_rect, 4)
-    pygame.draw.rect(screen, CYAN, cage_rect.inflate(-5, -5), 1)
+    pygame.draw.rect(screen, wall_color, cage_rect, 4)
+    pygame.draw.rect(screen, edge_color, cage_rect.inflate(-5, -5), 1)
 
     pygame.draw.rect(screen, PINK, door_rect)
     pygame.draw.line(screen, WHITE, door_rect.topleft, door_rect.topright, 1)
@@ -236,12 +242,16 @@ def draw_death_animation(
         pygame.draw.line(screen, YELLOW, inner, outer, 2)
 
 
-def draw_hud(screen, score, lives, is_frightened, frightened_timer, elapsed_seconds):
+def draw_hud(
+    screen, score, lives, is_frightened, frightened_timer, elapsed_seconds, theme=None
+):
     """Draw the HUD (heads-up display)"""
+    wall_color = theme["wall"] if theme else BLUE
+    inner_color = theme["inner"] if theme else BLUE_DARK
     hud_y = MAZE_HEIGHT
     pygame.draw.rect(screen, BLACK, (0, hud_y, WIDTH, HUD_HEIGHT))
-    pygame.draw.line(screen, BLUE, (0, hud_y), (WIDTH, hud_y), 3)
-    pygame.draw.line(screen, BLUE_DARK, (0, hud_y + 4), (WIDTH, hud_y + 4), 2)
+    pygame.draw.line(screen, wall_color, (0, hud_y), (WIDTH, hud_y), 3)
+    pygame.draw.line(screen, inner_color, (0, hud_y + 4), (WIDTH, hud_y + 4), 2)
 
     score_text = FONT.render(f"SCORE {score:04}", False, WHITE)
     title_text = TITLE_FONT.render("PAC-MAN", False, YELLOW)
@@ -295,7 +305,7 @@ def draw_countdown_message(screen, game_state, countdown_timer, fps):
     draw_center_message(screen, title, "GET READY", YELLOW, BLUE)
 
 
-def draw_win_message(screen, remaining_food):
+def draw_win_message(screen, remaining_food, theme=None):
     """Draw win message overlay"""
     if remaining_food > 0:
         return
@@ -307,7 +317,7 @@ def draw_win_message(screen, remaining_food):
 
     panel = pygame.Rect(34, HEIGHT // 2 - 70, WIDTH - 68, 110)
     pygame.draw.rect(screen, BLACK, panel)
-    pygame.draw.rect(screen, BLUE, panel, 4)
+    pygame.draw.rect(screen, theme["wall"] if theme else BLUE, panel, 4)
 
     text = FONT.render("YOU CLEARED THE MAP!", False, YELLOW)
     sub = SMALL_FONT.render("R RESTART   ESC QUIT", False, WHITE)
@@ -337,11 +347,15 @@ def draw_game_over_message(screen, game_over):
     screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, HEIGHT // 2 - 6))
 
 
-def draw_menu(screen, maps, selected_map, frame_count):
+def draw_menu(screen, maps, themes, selected_map, frame_count):
     """Draw the retro start menu."""
     screen.fill(BLACK)
     ticks = pygame.time.get_ticks()
     time_seconds = ticks / 1000
+    theme = themes[selected_map % len(themes)]
+    wall_color = theme["wall"]
+    inner_color = theme["inner"]
+    edge_color = theme["edge"]
 
     for y in range(0, HEIGHT, TILE_SIZE):
         pygame.draw.line(screen, (5, 5, 20), (0, y), (WIDTH, y))
@@ -350,8 +364,8 @@ def draw_menu(screen, maps, selected_map, frame_count):
 
     marquee = pygame.Rect(20, 18, WIDTH - 40, 76)
     pygame.draw.rect(screen, BLACK, marquee)
-    pygame.draw.rect(screen, BLUE, marquee, 4)
-    pygame.draw.rect(screen, CYAN, marquee.inflate(-8, -8), 1)
+    pygame.draw.rect(screen, wall_color, marquee, 4)
+    pygame.draw.rect(screen, edge_color, marquee.inflate(-8, -8), 1)
 
     title = pygame.font.SysFont("consolas", 42, bold=True).render(
         "PAC-MAN", False, YELLOW
@@ -394,16 +408,18 @@ def draw_menu(screen, maps, selected_map, frame_count):
         )
 
     heading = FONT.render("SELECT MAP", False, WHITE)
-    screen.blit(heading, (WIDTH // 2 - heading.get_width() // 2, 170))
+    screen.blit(heading, (WIDTH // 2 - heading.get_width() // 2, 186))
+    theme_label = SMALL_FONT.render(theme["name"].upper(), False, edge_color)
+    screen.blit(theme_label, (WIDTH // 2 - theme_label.get_width() // 2, 212))
 
     for index in range(len(maps)):
-        y = 208 + index * 34
+        y = 238 + index * 32
         selected = index == selected_map
         color = YELLOW if selected else HUD_TEXT
         label = FONT.render(f"{index + 1:02}  MAZE {index + 1}", False, color)
         if selected:
-            pygame.draw.rect(screen, BLUE_DARK, (126, y - 5, 280, 30))
-            pygame.draw.rect(screen, BLUE, (126, y - 5, 280, 30), 2)
+            pygame.draw.rect(screen, inner_color, (126, y - 5, 280, 30))
+            pygame.draw.rect(screen, wall_color, (126, y - 5, 280, 30), 2)
             pointer = FONT.render(">", False, YELLOW)
             screen.blit(pointer, (100, y - 1))
         screen.blit(label, (146, y))
@@ -413,10 +429,10 @@ def draw_menu(screen, maps, selected_map, frame_count):
     preview_width = len(preview_map[0]) * cell
     preview_height = len(preview_map) * cell
     preview_x = WIDTH // 2 - preview_width // 2
-    preview_y = 360
+    preview_y = 388
     pygame.draw.rect(
         screen,
-        BLUE,
+        edge_color,
         (preview_x - 8, preview_y - 8, preview_width + 16, preview_height + 16),
         2,
     )
@@ -429,7 +445,7 @@ def draw_menu(screen, maps, selected_map, frame_count):
                 cell,
             )
             if tile == "#":
-                pygame.draw.rect(screen, BLUE_DARK, rect)
+                pygame.draw.rect(screen, inner_color, rect)
             elif tile == ".":
                 pygame.draw.circle(screen, PELLET, rect.center, 1)
             elif tile == "o":

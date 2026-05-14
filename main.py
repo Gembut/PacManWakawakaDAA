@@ -15,7 +15,7 @@ from config import (
 )
 from logic.game_state import GameState
 from logic.audio import SoundManager
-from map import GAME_MAPS, next_tile, wrap_tile
+from map import GAME_MAPS, MAP_THEMES, get_map_theme, next_tile, wrap_tile
 from character.ghost import update_ghost
 from algorithm.pathfinding import find_path
 from logic.render import (
@@ -242,12 +242,15 @@ def main():
 
         # Render
         if screen_state == "menu":
-            draw_menu(screen, GAME_MAPS, selected_map, pygame.time.get_ticks() // 16)
+            draw_menu(
+                screen, GAME_MAPS, MAP_THEMES, selected_map, pygame.time.get_ticks() // 16
+            )
         else:
+            theme = get_map_theme(game.map_index)
             draw_background(screen)
             draw_pellets(screen, game.pellets, game.power_pellets)
-            draw_walls(screen, game.walls)
-            draw_ghost_cage(screen)
+            draw_walls(screen, game.walls, theme)
+            draw_ghost_cage(screen, theme)
             draw_ghosts(screen, game.ghosts, game.is_frightened(), game.frightened_timer)
 
             if game.game_state == "dying":
@@ -275,9 +278,10 @@ def main():
                 game.is_frightened(),
                 game.frightened_timer,
                 game.elapsed_frames // FPS,
+                theme,
             )
             draw_countdown_message(screen, game.game_state, game.countdown_timer, FPS)
-            draw_win_message(screen, game.remaining_food())
+            draw_win_message(screen, game.remaining_food(), theme)
             draw_game_over_message(screen, game.game_over)
 
         pygame.display.flip()
