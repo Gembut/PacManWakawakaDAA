@@ -4,7 +4,8 @@ PacManWakawakaDAA is a Pac-Man style game built with Python and Pygame for the D
 
 ## Course Information
 
-**Class:** EF234405 Design & Analysis of Algorithms (E)  
+**Class Code:** EF234405  
+**Class:** Design & Analysis of Algorithms (E)  
 **Lecturer:** Irfan Subakti
 
 ## Team Members
