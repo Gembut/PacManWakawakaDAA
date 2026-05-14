@@ -81,16 +81,16 @@ python main.py
 
 ## Gallery
 Main Menu <br>
-<img width="530" height="657" alt="image" src="https://github.com/user-attachments/assets/ebafc811-a0ad-4707-85e8-8c3bbe5ecd15" />
+<img width="533" height="653" alt="image" src="https://github.com/user-attachments/assets/1639ced3-74d8-443d-8f9a-94aa4af2477d" />
 
 Maze 1 <br>
-<img width="531" height="652" alt="image" src="https://github.com/user-attachments/assets/c2c35f98-5b6c-4a2f-93fb-42685d2ced20" />
+<img width="530" height="657" alt="image" src="https://github.com/user-attachments/assets/ebafc811-a0ad-4707-85e8-8c3bbe5ecd15" />
 
 Maze 2 <br>
-<img width="531" height="652" alt="image" src="https://github.com/user-attachments/assets/743d0fae-2a5c-4d03-a4a4-d55508a1d822" />
+<img width="531" height="652" alt="image" src="https://github.com/user-attachments/assets/c2c35f98-5b6c-4a2f-93fb-42685d2ced20" />
 
 Maze 3 <br>
-<img width="533" height="651" alt="image" src="https://github.com/user-attachments/assets/76decc2c-9646-4dbb-a8fe-3f7574ac469c" />
+<img width="531" height="652" alt="image" src="https://github.com/user-attachments/assets/743d0fae-2a5c-4d03-a4a4-d55508a1d822" />
 
 Maze 4 <br>
-<img width="533" height="651" alt="image" src="https://github.com/user-attachments/assets/0824d5c8-1ed7-4412-a3cf-2e0b1aa0175c" />
+<img width="533" height="651" alt="image" src="https://github.com/user-attachments/assets/76decc2c-9646-4dbb-a8fe-3f7574ac469c" />
