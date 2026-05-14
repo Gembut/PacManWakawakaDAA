@@ -1,269 +1,80 @@
 # PacManWakawakaDAA
-wakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawakawaka
 
+PacManWakawakaDAA is a Pac-Man style game built with Python and Pygame for the Design & Analysis of Algorithms course. The project focuses on applying graph traversal and pathfinding algorithms in a playable maze game.
 
+## Course Information
 
-pacman_ai/
-├── main.py             ← game loop & entry point
-├── config.py           ← all constants (TILE_SIZE, colors, RAW_MAP, etc.)
-├── map_utils.py        ← parse_map, is_walkable, get_neighbors, distances
-├── renderer.py         ← draw_map, draw_ui (pure drawing, no game logic)
-├── algorithms/
-│   ├── __init__.py     ← re-exports all three so imports stay clean
-│   ├── astar.py        ← A* only
-│   ├── bfs.py          ← BFS only
-│   └── dijkstra.py     ← Dijkstra only
-└── entities/
-    ├── __init__.py
-    ├── pacman.py       ← Pacman class
-    └── ghost.py        ← Ghost class
+**Class:** EF234405 Design & Analysis of Algorithms (E)  
+**Lecturer:** Irfan Subakti
 
-    
-Untuk project:
+## Team Members
 
-🎮 Pacman + AI Ghost (BFS/A*)
+| Name | NRP |
+| --- | --- |
+| Muhammad Daffa Nurrahman | 5025231208 |
+| Muhammad Naufal Dzakwan | 5025231234 |
+| Muhammad Rafi Budiman | 5025231297 |
 
-saya sangat menyarankan:
+## Features
 
-✅ Pygame saja
+- Pac-Man style maze gameplay using Pygame.
+- Player movement and collision handling.
+- Ghost behavior powered by pathfinding algorithms.
+- Algorithm comparison report output.
+- Metrics collection for algorithm performance.
 
-⸻
+## Algorithms
 
-Kenapa Pygame Lebih Baik
+This project is used to demonstrate and compare pathfinding algorithms in a maze environment:
 
-1. Grid-based game sangat cocok di Pygame
+- **BFS (Breadth-First Search):** Finds the shortest path in an unweighted graph.
+- **DFS (Depth-First Search):** Explores paths deeply before backtracking.
+- **A* Search:** Uses a heuristic to find an efficient shortest path.
+- **Dijkstra's Algorithm:** Finds shortest paths based on accumulated cost.
 
-Pacman itu:
+## Project Structure
 
-* tile/grid movement
-* realtime loop
-* pathfinding
+```text
+PacManWakawakaDAA/
+|-- algorithm/
+|   |-- analysis.py
+|   |-- pathfinding.py
+|-- character/
+|   |-- ghost.py
+|   |-- player.py
+|-- logic/
+|   |-- audio.py
+|   |-- game_state.py
+|   |-- render.py
+|-- sounds/
+|-- config.py
+|-- main.py
+|-- map.py
+|-- requirements.txt
+|-- algorithm_metrics.csv
+|-- algorithm_report.txt
+```
 
-Pygame sangat natural untuk ini.
+## Requirements
 
-⸻
+- Python 3.10 or newer
+- Pygame
 
-2. AI pathfinding lebih mudah
+Install dependencies:
 
-Implementasi:
+```bash
+pip install -r requirements.txt
+```
 
-* BFS
-* DFS
-* A*
-* graph traversal
+## How to Run
 
-lebih simpel di Pygame dibanding web.
+Run the game from the project root:
 
-⸻
+```bash
+python main.py
+```
 
-3. Development jauh lebih cepat
+## Report Files
 
-Kalau web:
-
-* harus handle HTML
-* CSS
-* JS
-* canvas
-* game loop browser
-* rendering
-* input sync
-
-Sedangkan Pygame:
-langsung fokus ke:
-
-* gameplay
-* AI
-* algoritma
-
-⸻
-
-4. DAA dosen lebih peduli algoritma daripada deployment
-
-Yang penting:
-
-* algoritma jelas
-* visual ada
-* implementation works
-
-Bukan:
-
-* hosted website
-* responsive UI
-* frontend modern
-
-⸻
-
-Jangan Pakai:
-
-❌ Pygame + Web
-
-Karena:
-
-* complexity naik drastis
-* debugging lebih susah
-* deployment ribet
-* tidak terlalu menambah nilai DAA
-
-⸻
-
-Jangan Pakai Web Kalau:
-
-* deadline dekat
-* fokus nilai algoritma
-* tim kecil
-
-Web lebih cocok kalau:
-
-* mau multiplayer
-* leaderboard online
-* fancy UI
-
-⸻
-
-Stack Final yang Saya Rekomendasikan
-
-✅ Python + Pygame
-
-⸻
-
-Kenapa Pacman AI Bagus untuk DAA
-
-Karena kalian bisa pakai:
-
-Feature	Algorithm
-Ghost chase	BFS
-Smart shortest path	A*
-Maze traversal	DFS
-Pellet collection optimization	Graph
-
-⸻
-
-Ide Gameplay yang Bagus
-
-Basic
-
-* Player = Pacman
-* Ghost = AI
-* Maze = graph
-
-⸻
-
-AI Ghost Behavior
-
-Ghost 1
-
-BFS shortest path ke player
-
-Ghost 2 (bonus)
-
-Random DFS exploration
-
-Ghost 3 (bonus)
-
-A* predictive chase
-
-Ini sangat bagus untuk evaluation.
-
-⸻
-
-Evaluation Section Jadi Kuat
-
-Kalian bisa compare:
-
-Algorithm	Speed	Accuracy	Nodes Visited
-BFS	Fast	Optimal	Medium
-DFS	Random	Non-optimal	High
-A*	Smartest	Optimal	Low
-
-Ini langsung kelihatan DAA banget.
-
-⸻
-
-Visual yang Bisa Dibuat
-
-Node explored
-
-warna biru
-
-Path
-
-warna hijau
-
-Ghost
-
-merah
-
-Pacman
-
-kuning
-
-⸻
-
-Yang Akan Membuat Project Kalian “WOW”
-
-Tambahkan:
-
-“Visualization Mode”
-
-Saat ghost mencari path:
-
-* node traversal terlihat realtime
-
-Dosen biasanya langsung impressed.
-
-⸻
-
-Tingkat Kesulitan
-
-Component	Difficulty
-Movement	Easy
-Maze	Easy
-BFS ghost	Medium
-A* ghost	Medium
-Full polished game	Hard
-
-⸻
-
-Saran Realistis
-
-Fokus dulu:
-
-MVP
-
-* movement
-* pellet
-* 1 ghost
-* BFS AI
-
-Sudah cukup bagus untuk nilai tinggi.
-
-⸻
-
-Kalau Masih Ada Waktu
-
-Tambah:
-
-* multiple ghost behavior
-* A*
-* score
-* animation
-* power pellet
-* menu
-* level generator
-
-⸻
-
-Final Recommendation
-
-✅ Python + Pygame
-
-adalah pilihan terbaik untuk:
-🎮 Pacman AI DAA Project
-
-Karena:
-
-* paling cepat develop
-* paling cocok untuk graph/pathfinding
-* paling aman selesai
-* tetap menarik saat demo
-* algoritma mudah divisualisasikan.
+- `algorithm_metrics.csv`: stores collected algorithm performance metrics.
+- `algorithm_report.txt`: contains generated analysis results.
