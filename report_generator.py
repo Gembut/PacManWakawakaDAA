@@ -5,6 +5,9 @@ Shows which algorithms are used and their performance metrics
 """
 
 from datetime import datetime
+
+import csv
+import os
 from algorithm.analysis import global_metrics
 
 
@@ -72,6 +75,27 @@ class AlgorithmReport:
             ],
         },
     }
+
+    @staticmethod
+    def _load_metrics_from_csv(csv_path):
+        """Load metrics from CSV if present and return as a dict compatible with get_all_summaries()"""
+        metrics = {}
+        if not os.path.exists(csv_path):
+            return metrics
+        with open(csv_path, newline="") as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                algo = row["Algorithm"].lower()
+                metrics[algo] = {
+                    "calls": int(row["Calls"]),
+                    "successful_paths": int(row["Successful_Searches"]),
+                    "failed_searches": int(row["Failed_Searches"]),
+                    "avg_time": float(row["Avg_Time_ms"]),
+                    "avg_path_length": float(row["Avg_Path_Length"]),
+                    "total_time": float(row["Total_Time_ms"]),
+                    "avg_nodes_explored": float(row.get("Avg_Nodes_Explored", 0)),
+                }
+        return metrics
 
     @staticmethod
     def generate_text_report():
@@ -146,7 +170,11 @@ Note: DFS can be used by adding to GHOSTS_CONFIG with "algorithm": "dfs"
         report.append("\nPERFORMANCE METRICS")
         report.append("-" * 80)
 
-        metrics_data = global_metrics.get_all_summaries()
+        # Try to load metrics from CSV if present, else use in-memory
+        csv_metrics = AlgorithmReport._load_metrics_from_csv("algorithm_metrics.csv")
+        metrics_data = (
+            csv_metrics if csv_metrics else global_metrics.get_all_summaries()
+        )
 
         if metrics_data:
             report.append("\nAlgorithm Performance Statistics:\n")
@@ -162,6 +190,10 @@ Note: DFS can be used by adding to GHOSTS_CONFIG with "algorithm": "dfs"
                 report.append(
                     f"  Total Time:            {metrics['total_time']:.3f} ms"
                 )
+                if "avg_nodes_explored" in metrics:
+                    report.append(
+                        f"  Avg Nodes Explored:    {metrics['avg_nodes_explored']:.1f}"
+                    )
                 report.append("")
         else:
             report.append(
